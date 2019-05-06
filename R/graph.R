@@ -160,6 +160,10 @@ dm_create_graph_list <- function(dm, view_type = "all",
         dm$references <- dm$references[
           dm$references$table %in% focus$tables &
             dm$references$ref %in% focus$tables, ]
+      } else {
+        if (identical(view_type, "used_keys_only")) {
+          view_type <- "keys_only"
+        }
       }
     }
   } else {
@@ -189,6 +193,11 @@ dm_create_graph_list <- function(dm, view_type = "all",
           keys_only = {
             tables <- lapply(tables, function(tab)
               tab[tab[["key"]] > 0 | !is.na(tab[,"ref"]), ])
+          },
+
+          used_keys_only = {
+            tables <- lapply(tables, function(tab)
+              tab[tab[["key"]] > 0 | (tab[,"ref"] %in% focus$tables), ])
           },
 
           title_only = {
